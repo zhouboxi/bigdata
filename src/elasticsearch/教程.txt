@@ -1,0 +1,340 @@
+---
+title:Elasticsearch教程
+---
+## Elasticsearch教程
+### Elasticsearch介绍
+Elasticsearch 是一个建立在全文搜索引擎 Apache Lucene(TM) 基础上的搜索引擎，可以说 Lucene 是当今最先进，最高效的全功能开源搜索引擎框架。
+#### Elasticsearch的特性
+Elasticsearch的一般特性如下 -Elasticsearch可扩展高达PB级的结构化和非结构化数据。Elasticsearch可以用来替代MongoDB和RavenDB等做文档存储。Elasticsearch使用非标准化来提高搜索性能。Elasticsearch是受欢迎的企业搜索引擎之一，目前被许多大型组织使用，如Wikipedia，The Guardian，StackOverflow，GitHub等。Elasticsearch是开放源代码，可在Apache许可证版本2.0下提供。
+####  Elasticsearch的主要概念
+
+ 1. 节点
+
+ 它指的是Elasticsearch的单个正在运行的实例。单个物理和虚拟服务器容纳多个节点，这取决于其物理资源的能力，如RAM，存储和处理能力。
+
+ 2. 集群
+
+ 它是一个或多个节点的集合。 集群为整个数据提供跨所有节点的集合索引和搜索功能。
+
+ 3. 索引
+
+ 它是不同类型的文档和文档属性的集合。索引还使用分片的概念来提高性能。 例如，一组文档包含社交网络应用的数据。类型/映射 - 它是共享同一索引中存在的一组公共字段的文档的集合。 例如，索引包含社交网络应用的数据，然后它可以存在用于用户简档数据的特定类型，另一类型可用于消息的数据，以及另一类型可用于评论的数据。
+
+
+ 4. 文档
+
+ 它是以JSON格式定义的特定方式的字段集合。每个文档都属于一个类型并驻留在索引中。每个文档都与唯一标识符(称为UID)相关联。碎片 - 索引被水平细分为碎片。这意味着每个碎片包含文档的所有属性，但包含的数量比索引少。水平分隔使碎片成为一个独立的节点，可以存储在任何节点中。主碎片是索引的原始水平部分，然后这些主碎片被复制到副本碎片中。
+
+ 5. 副本
+
+ Elasticsearch允许用户创建其索引和分片的副本。 复制不仅有助于在故障情况下增加数据的可用性，而且还通过在这些副本中执行并行搜索操作来提高搜索的性能。
+
+ #### Elasticsearch的优点
+
+1.Elasticsearch是基于Java开发的，这使得它在几乎每个平台上都兼容。
+2.Elasticsearch是实时的，换句话说，一秒钟后，添加的文档可以在这个引擎中搜索得到。
+3. Elasticsearch是分布式的，这使得它易于在任何大型组织中扩展和集成。通过使用Elasticsearch中的网关概念，创建完整备份很容易。
+4.与ApacheSolr相比，在Elasticsearch中处理多租户非常容易。Elasticsearch使用JSON对象作为响应，这使得可以使用不同的编程语言调用Elasticsearch服务器。
+5.Elasticsearch支持几乎大部分文档类型，但不支持文本呈现的文档类型。
+
+ #### Elasticsearch的缺点
+ 1. Elasticsearch在处理请求和响应数据方面没有多语言和数据格式支持(仅在JSON中可用)，与Apache Solr不同，Elasticsearch不可以使用CSV，XML等格式。
+ 2. Elasticsearch也有一些伤脑的问题发生，虽然在极少数情况下才会发生。
+ ### 安装
+ [windows下载地址](https://www.elastic.co/downloads/elasticsearch#ga-release)
+
+ linux 安装
+``` javascript
+$tar –xvf elasticsearch-6.5.3.tar.gz
+```
+使用YUM实用程序的Debian Linux操作系统
+
+``` javascript
+##下载并安装公共签名密钥
+rpm --import http://packages.elastic.co/GPG-KEY-elasticsearch
+##在“/etc/yum.repos.d/”目录中用.repo作为后缀在文件中添加以下文本。 例如，在elasticsearch.repo文件中，添加以下文本 - [elasticsearch-5.x]
+name = Elasticsearch repository for5.x packages
+baseurl = http://packages.elastic.co/elasticsearch/5.x/centos
+gpgcheck = 1
+gpgkey = http://packages.elastic.co/GPG-KEY-elasticsearch
+enabled = 1
+##Bash现在可以使用以下命令安装
+Elasticsearch：$ yum install elasticsearch
+```
+#### 运行
+进入到Elasticsearch主目录和bin文件夹。在Windows系统下可运行elasticsearch.bat文件，或者在UNIX rum Elasticsearch文件的情况下，可以使用命令提示符和通过终端执行相同操作。
+
+``` javascript
+##在Windows中
+cd elasticsearch-6.5.3/bin
+ elasticsearch
+##Bash在Linux中
+cd elasticsearch-6.5.3/bin
+./elasticsearch
+##注意 - 在Windows系统中，可能会收到错误，指出未设置JAVA_HOME，请将环境变量设置为“C:\Program Files\Java\jre1.8.0_65”或设置实际安装java的位置。
+```
+#### 修改端口
+
+``` javascript
+###Elasticsearch Web界面的默认端口是9200，或者可以通过更改bin目录中的elasticsearch.yml文件中的http.port字段值来更改。可以通过浏览http：// localhost:9200来检查服务器是否已启动并正在运行。如果没有问题，它将返回一个JSON对象，其中包含有关安装的Elasticsearch信息有以下方式 -{
+   "name" : "Brain-Child",
+   "cluster_name" : "elasticsearch", "version" : {
+      "number" : "5.1.0",
+      "build_hash" : "72cd1f1a3eee09505e036106146dc1949dc5dc87",
+      "build_timestamp" : "2015-11-18T22:40:03Z",
+      "build_snapshot" : false,
+      "lucene_version" : "5.3.1"
+   },
+   "tagline" : "You Know, for Search"
+}
+```
+#### 添加前端
+
+``` javascript
+###可以从 www.telerik.com 安装 fiddler2 作为 Elasticsearch 的前端。在fiddler2的配置窗口中，您可以点击Elasticsearch的地址添加索引，如果需要，那么类型/映射也使用HTTP POST方法，例如 -
+地址栏 - http://localhost:9200/schools/school
+请求正文 - 可添加JSON对象，这将获得索引存储。
+##可以使用相同方式来搜索任何东西，只需在URL的结尾处添加“_search”关键字，并在请求正文中发送一个查询，例如 -
+地址栏 - POST http://localhost:9200/city/schools/_search
+请求正文 - { "query":{ "match_all":{} } }
+##此查询将返回该索引中属于该特定类型的所有内容。可以通过将相同的URL放在地址栏中，并使用HTTP DELETE方法进行匹配来删除特定的索引或类型。
+```
+#### 使用REST API与Sense
+Chrome插件Sense（github是开源项目）(已被下架，自行安装)
+链接: https://pan.baidu.com/s/1nHQgqoxrxpXNIyr_CjbH-w 提取码: ij3j
+Google已将 xxx 标记为恶意程序并阻止安装的解决办法（谷歌浏览器设置里-》高级-》保护浏览去掉）
+#### 创建索引
+
+``` javascript
+http://localhost:9200/<index>/<type>/[<id>]
+##索引和类型是必需的，而id部分是可选的。如果不指定ID，ElasticSearch会为我们生成一个ID。 但是，如果不指定id，应该使用HTTP的POST而不是PUT请求。
+```
+索引名称是任意的。如果服务器上没有此名称的索引，则将使用默认配置来创建一个索引。至于类型名称，它也是任意的。 它有几个用途，包括：每种类型都有自己的ID空间。不同类型具有不同的映射(“模式”，定义属性/字段应如何编制索引)。搜索多种类型是可以的，并且也很常见，但很容易搜索一种或多种指定类型。
+
+``` javascript
+{
+    "title": "The Godfather",
+    "director": "Francis Ford Coppola",
+    "year": 1972
+}
+##要创建一个索引，这里使用索引的名称为“movies”，类型名称(“movie”)和id(“1”)，并按照上述模式使用JSON对象在正文中进行请求。
+curl -XPUT "http://localhost:9200/movies/movie/1" -d'
+{
+    "title": "The Godfather",
+    "director": "Francis Ford Coppola",
+    "year": 1972
+}'
+```
+#### 查看生成索引
+
+``` javascript
+POST _search
+{
+    "query": {
+        "match_all": {}
+    }
+}
+```
+#### 更新索引
+
+``` javascript
+curl -XPUT "http://localhost:9200/movies/movie/1" -d'
+{
+    "title": "The Godfather",
+    "director": "Francis Ford Coppola",
+    "year": 1972,
+    "genres": ["Crime", "Drama"]
+}'
+#ElasticSearch的响应结果与前面的大体上一样，但有一点区别，结果对象中的_version属性的值为2，而不是1
+```
+#### 由ID获取文档/索引
+
+``` javascript
+curl -XGET "http://localhost:9200/movies/movie/1" -d''
+## 最后最重要的是，它有一个名称为“_source”的属性，它包含实际获取的文档信息。
+```
+#### 删除文档
+
+``` javascript
+curl -XDELETE "http://localhost:9200/movies/movie/1" -d''
+### 响应对象包含元数据方面的一些常见数据字段，以及名为“_found”的属性，表示文档确实已找到并且操作成功。
+```
+#### 搜索
+
+``` javascript
+PUT http://localhost:9200/movies/movie/1
+{
+    "title": "The Godfather",
+    "director": "Francis Ford Coppola",
+    "year": 1972,
+    "genres": ["Crime", "Drama"]
+}
+PUT http://localhost:9200/movies/movie/2
+{
+    "title": "Lawrence of Arabia",
+    "director": "David Lean",
+    "year": 1962,
+    "genres": ["Adventure", "Biography", "Drama"]
+}
+PUT http://localhost:9200/movies/movie/3
+{
+    "title": "To Kill a Mockingbird",
+    "director": "Robert Mulligan",
+    "year": 1962,
+    "genres": ["Crime", "Drama", "Mystery"]
+}
+```
+####  1_search端点
+搜索电影，可以对以下任一URL进行POST请求：
+ - http://localhost:9200/_search  搜索所有索引和所有类型。
+ - http://localhost:9200/movies/_search -在电影索引中搜索所有类型
+ - http://localhost:9200/movies/movie/_search -在电影索引中显式搜索电影类型的文档。
+
+####  搜索请求正文和ElasticSearch查询DSL
+
+``` javascript
+##如果只是发送一个请求到上面的URL，我们会得到所有的电影信息。为了创建更有用的搜索请求，还需要向请求正文中提供查询。 请求正文是一个JSON对象，除了其它属性以外，它还要包含一个名称为“query”的属性，这就可使用ElasticSearch的查询DSL。{
+    "query": {
+        //Query DSL here
+    }
+}
+```
+#### 基本自由文本搜索
+
+``` javascript
+##查询字符串查询是一个高级查询，有很多不同的选项，ElasticSearch将解析和转换为更简单的查询树。如果忽略了所有的可选参数，并且只需要给它一个字符串用于搜索，它可以很容易使用。现在尝试在两部电影的标题中搜索有“kill”这个词的电影信息：
+curl -XPOST "http://localhost:9200/_search" -d'
+{
+    "query": {
+        "query_string": {
+            "query": "kill"
+        }
+    }
+}'
+```
+#### 指定搜索的字段
+
+``` javascript
+curl -XPOST "http://localhost:9200/_search" -d'
+{
+    "query": {
+        "query_string": {
+            "query": "ford",
+            "fields": ["title"]
+        }
+    }
+}'
+```
+#### 过滤
+
+``` javascript
+##要添加过滤器，修改搜索请求正文，以便当前的顶级查询(查询字符串查询)包含在过滤的查询中：
+curl -XPOST "http://localhost:9200/_search" -d'
+{
+    "query": {
+        "filtered": {
+            "query": {
+                "query_string": {
+                    "query": "drama"
+                }
+            },
+            "filter": {
+                "term": { "year": 1962 }
+            }
+        }
+    }
+}'
+```
+#### 无需查询即可进行过滤
+
+``` javascript
+##一个解决方案是修改当前的搜索请求，替换查询字符串 query 过滤查询中的match_all查询，这是一个查询，只是匹配一切。类似下面这个：
+curl -XPOST "http://localhost:9200/_search" -d'
+{
+    "query": {
+        "filtered": {
+            "query": {
+                "match_all": {
+                }
+            },
+            "filter": {
+                "term": { "year": 1962 }
+            }
+        }
+    }
+}'
+##JSON另一个更简单的方法是使用常数分数查询：
+curl -XPOST "http://localhost:9200/_search" -d'
+{
+    "query": {
+        "constant_score": {
+            "filter": {
+                "term": { "year": 1962 }
+            }
+        }
+    }
+}'
+```
+#### 批量添加索引和数据
+1.创建索引
+
+``` javascript
+POST http://localhost:9200/schools
+```
+2.创建映射
+``` javascript
+##Elasticsearch将根据请求体中提供的数据自动创建映射，我们将使用其批量功能在此索引中添加多个JSON对象。
+POST http://localhost:9200/schools/_bulk
+```
+3.添加数据
+
+``` javascript
+{
+   "index":{
+      "_index":"schools", "_type":"school", "_id":"1"
+   }
+}
+{
+   "name":"Central School", "description":"CBSE Affiliation", "street":"Nagan",
+   "city":"paprola", "state":"HP", "zip":"176115", "location":[31.8955385, 76.8380405],
+   "fees":2000, "tags":["Senior Secondary", "beautiful campus"], "rating":"3.5"
+}
+{
+   "index":{
+      "_index":"schools", "_type":"school", "_id":"2"
+   }
+}
+{
+   "name":"Saint Paul School", "description":"ICSE
+   Afiliation", "street":"Dawarka", "city":"Delhi", "state":"Delhi", "zip":"110075",
+   "location":[28.5733056, 77.0122136], "fees":5000,
+   "tags":["Good Faculty", "Great Sports"], "rating":"4.5"
+}
+```
+#### 多索引
+
+``` javascript
+POST http://localhost:9200/index1,index2,index3/_search
+```
+#### 所有索引的_all关键字
+``` javascript
+POST http://localhost:9200/_all/_search
+```
+#### 通配符 (*，+， - )
+
+``` javascript
+##来自所有索引的JSON对象，从school 开始，有CBSE。
+POST http://localhost:9200/school*/_search
+##来自所有索引的JSON对象，它们以“school”开头，但不是schools_gov并且在其中有CBSE。
+POST http://localhost:9200/school*,-schools_gov /_search
+##ignore_unavailable - 如果URL中存在的一个或多个索引不存在，则不会发生错误或操作不会停止
+POST http://localhost:9200/school*,book_shops/_search?ignore_unavailable = true
+## allow_no_indices如果带有通配符的网址没有索引，这个参数是true值时将防止错误。
+POST http://localhost:9200/schools_pri*/_search?allow_no_indices = true
+##expand_wildcards此参数确定通配符是否需要扩展为打开索引或闭合索引或两者。 此参数的值可以是打开和关闭或无和全部。
+##关闭索引schools -
+POST http://localhost:9200/schools/_close
+POST http://localhost:9200/school*/_search?expand_wildcards = closed
+```
+
+
